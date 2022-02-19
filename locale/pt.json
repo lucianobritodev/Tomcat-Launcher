@@ -1,0 +1,17 @@
+{
+    "tooltip": "Tomcat-Launcher",
+    "add": "Adicionar novo ...",
+    "open": "Abrir Diretório",
+    "log": "Abrir log",
+    "server": "Configurar server.xml",
+    "context": "Configurar context.xml",
+    "start": "Iniciar servidor",
+    "stop": "Parar servidor",
+    "remove": "Remover servidor",
+    "close": "Fechar o Tomcat-Launcher",
+    "notifier": {
+        "start": "Tomcat iniciado com sucesso!",
+        "stop": "Tomcat finalizado com sucesso!",
+        "erro": "Erro ao iniciar/finalizar o Tomcat"
+    }
+}

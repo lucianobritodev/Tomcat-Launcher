@@ -1,0 +1,12 @@
+{
+    "tooltip": "Tomcat-Launcher",
+    "add": "Add a new Tomcat ...",
+    "open": "Open containing folder",
+    "log": "Open log",
+    "server": "Configure server.xml",
+    "context": "Configure context.xml",
+    "start": "Start server",
+    "stop": "Stop server",
+    "remove": "Remove server",
+    "close": "Close Tomcat-Launcher"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "tomcat-launcher",
+  "version": "1.0.0",
+  "productName": "Tomcat Launcher",
+  "description": "Launcher for Tomcat available on your system from here",
+  "license": "MIT",
+  "author": {
+    "name": "Luciano Brito",
+    "email": "lucianobrito.dev@gmail.com",
+    "url": "http://github.com/lucianobritodev"
+  },
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "nodemon --exec electron .",
+    "clean": "rimraf dist",
+    "bundle:x64": "electron-packager . tomcat-launcher --overwrite  --asar=true --platform=linux --arch=x64 --icon=build/icons/icon.png --prune=true --out=dist/",
+    "deb:x64": "electron-installer-debian --src dist/tomcat-launcher-linux-x64/ --arch amd64 --config config.json",
+    "build": "npm run clean && npm run bundle:x64 && npm run deb:x64"
+  },
+  "devDependencies": {
+    "electron": "^15.3.1",
+    "electron-packager": "^15.4.0",
+    "nodemon": "^2.0.15",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@sentry/electron": "^2.5.4",
+    "electron-store": "^8.0.1",
+    "node-notifier": "^10.0.1"
+  }
+}
