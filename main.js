@@ -142,14 +142,15 @@ function showNotifications(num) {
       stopTomcat();
       break;
     default:
+      errorTomcat();
       break;
   }
 }
 
 function startTomcat() {
   return notifier.notify({
-    title: 'Sucesso',
-    message: locale.notifier.start,
+    title: locale.notifier.start.title,
+    message: locale.notifier.start.message,
     wait: true,
     timeout: false,
     icon: resolve(__dirname, 'assets/icon.png')
@@ -158,8 +159,18 @@ function startTomcat() {
 
 function stopTomcat() {
   return notifier.notify({
-    title: 'Sucesso',
-    message: locale.notifier.stop,
+    title: locale.notifier.stop.title,
+    message: locale.notifier.stop.message,
+    wait: true,
+    timeout: false,
+    icon: resolve(__dirname, 'assets/icon.png')
+  });
+}
+
+function errorTomcat() {
+  return notifier.notify({
+    title: locale.notifier.error.title,
+    message: locale.notifier.error.message,
     wait: true,
     timeout: false,
     icon: resolve(__dirname, 'assets/icon.png')
