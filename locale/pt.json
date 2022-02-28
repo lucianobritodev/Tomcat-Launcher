@@ -10,17 +10,8 @@
     "remove": "Remover servidor",
     "close": "Fechar o Tomcat-Launcher",
     "notifier": {
-        "start": {
-            "title": "Rodando!",
-            "message": "Tomcat iniciado com sucesso."
-        },
-        "stop": {
-            "title": "Finalizado!",
-            "message": "Tomcat finalizado com sucesso."
-        },
-        "error": {
-            "title": "Erro!",
-            "message": "Não foi possível iniciar/finalizar o Tomcat."
-        }
+        "start": "Tomcat iniciado com sucesso!",
+        "stop": "Tomcat finalizado com sucesso!",
+        "erro": "Erro ao iniciar/finalizar o Tomcat"
     }
 }
