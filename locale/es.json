@@ -8,5 +8,19 @@
     "start": "Iniciar el servidor",
     "stop": "Detener el servidor",
     "remove": "Quitar el servidor",
-    "close": "Cerrar el Tomcat-Launcher"
+    "close": "Cerrar el Tomcat-Launcher",
+    "notifier": {
+        "start": {
+            "title": "¡Corriendo!",
+            "message": "Tomcat se inició con éxito."
+        },
+        "stop": {
+            "title": "¡Detenido!",
+            "message": "Tomcat terminó con éxito."
+        },
+        "error": {
+            "title": "Error!",
+            "message": "No se puede iniciar/detener Tomcat."
+        }
+    }
 }

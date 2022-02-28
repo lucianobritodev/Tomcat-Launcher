@@ -8,5 +8,19 @@
     "start": "Start server",
     "stop": "Stop server",
     "remove": "Remove server",
-    "close": "Close Tomcat-Launcher"
+    "close": "Close Tomcat-Launcher",
+    "notifier": {
+        "start": {
+            "title": "Running!",
+            "message": "Tomcat started successfully."
+        },
+        "stop": {
+            "title": "Stopped!",
+            "message": "Tomcat successfully finished."
+        },
+        "error": {
+            "title": "Error!",
+            "message": "Unable to start/stop Tomcat."
+        }
+    }
 }
