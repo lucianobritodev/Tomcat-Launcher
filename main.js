@@ -1,4 +1,4 @@
-const { app, Tray, nativeImage, Menu, dialog } = require('electron');
+const { app, Tray, Menu, dialog } = require('electron');
 const { resolve, basename } = require('path');
 const { spawn } = require('child_process');
 const notifier = require('node-notifier');
@@ -6,7 +6,7 @@ const fs = require('fs');
 const Store = require('electron-store');
 const Sentry = require ('@sentry/electron');
 
-Sentry.init({ dsn: "https://5466675ecb1347d3a79052aad3a950ef@o1145500.ingest.sentry.io/6213487" });
+Sentry.init({ dsn: "https://48cf5547b9314631b530b4752d730314@o1145500.ingest.sentry.io/6337305" });
 
 const schema = {
   tomcatpaths: {
@@ -14,16 +14,20 @@ const schema = {
   },
 };
 
-const store = new Store({ schema });
-
 let newItem = [];
 let mainTray = {};
 let locale = {};
 
-function getLocale() {
-  const locale = app.getLocale();
+if (app.dock) {
+  app.dock.hide();
+}
 
-  switch (locale) {
+const store = new Store({ schema });
+
+function getLocale() {
+  const loc = app.getLocale();
+
+  switch (loc) {
     case 'es-419' || 'es':
       return JSON.parse(fs.readFileSync(resolve(__dirname, 'locale/es.json')));
     case 'pt-BR' || 'pt-PT':
@@ -31,7 +35,8 @@ function getLocale() {
     default:
       return JSON.parse(fs.readFileSync(resolve(__dirname, 'locale/en.json')));
   }
-  }
+
+}
 
 function render(tray = mainTray) {
   const storedTomcatPaths = store.get('tomcatpaths');
@@ -100,15 +105,13 @@ function render(tray = mainTray) {
         const [ path ] = newItem;
         const name = basename(path);
 
-        store.set('tomcatpaths', JSON.stringify(
-          [
-            ...tomcatPaths,
-            {
-                path,
-                name,
-            },
-          ]
-        ));
+        store.set('tomcatpaths', JSON.stringify([
+          ...tomcatPaths,
+          {
+            path,
+            name,
+          },
+        ]));
 
         render();
       },
@@ -129,7 +132,6 @@ function render(tray = mainTray) {
   ]);
 
   tray.setContextMenu(contextMenu);
-  tray.setToolTip(locale.tooltip);
   tray.on('click', tray.popUpContextMenu);
 }
 
@@ -153,7 +155,7 @@ function startTomcat() {
     message: locale.notifier.start.message,
     wait: true,
     timeout: false,
-    icon: resolve(__dirname, 'assets/icon.png')
+    icon: resolve(__dirname, 'assets/icons/icon.png')
   });
 }
 
@@ -163,7 +165,7 @@ function stopTomcat() {
     message: locale.notifier.stop.message,
     wait: true,
     timeout: false,
-    icon: resolve(__dirname, 'assets/icon.png')
+    icon: resolve(__dirname, 'assets/icons/icon.png')
   });
 }
 
@@ -173,14 +175,13 @@ function errorTomcat() {
     message: locale.notifier.error.message,
     wait: true,
     timeout: false,
-    icon: resolve(__dirname, 'assets/icon.png')
+    icon: resolve(__dirname, 'assets/icons/icon.png')
   });
 }
 
-//app.commandLine.appendSwitch('disable-gpu');
 app.whenReady().then(() => {
 
-  mainTray = new Tray(nativeImage.createFromPath('assets/IconTemplate.png'));
+  mainTray = new Tray(resolve(__dirname, 'assets', 'icons', 'IconTemplate.png'));
   render(mainTray);
 
 });
