@@ -9,8 +9,5 @@
         "description": "Launcher for Tomcat available on your system from here",
         "arch": "amd64",
         "icon": "build/icons/icon.png"
-    },
-    "lintianOverrides": [
-      "changelog-file-missing-in-native-package"
-    ]
+    }
 }

@@ -24,7 +24,7 @@ compile_commands.json
 .envrc
 
 # npm package
-/npm/dist
+/npm/dist/tomcat-launcher-linux-x64
 /npm/path.txt
 /npm/checksums.json
 
