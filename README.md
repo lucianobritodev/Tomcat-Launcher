@@ -7,10 +7,13 @@
 
 Tomcat-Launcher was developed entirely in [Electron](https://www.electronjs.org/) in order to facilitate the execution, administration in multiple instances of Tomcat, as well as, to facilitate the deployment and testing of packages *.war.
 
-
 ## Installation
 
-1. To install the application, first of all, clone the project or download the zipped source code to your local machine.
+Open the `dist/installers` folder and download and install the tomcat-launcher*.deb.
+
+## Compiling the Project Locally
+
+1. To compile the application, first of all, clone the project or download the zipped source code to your local machine.
 2. Access the project folder and run the command to download the dependencies:
 ```
 $ npm install

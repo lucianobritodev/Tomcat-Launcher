@@ -16,7 +16,6 @@
 *.vcxproj.user
 *.xcodeproj
 /.idea/
-/dist/
 node_modules
 SHASUMS256.txt
 **/package-lock.json
@@ -33,8 +32,7 @@ compile_commands.json
 # Generated API definitions
 electron-api.json
 electron.d.ts
-build
-dist
+/dist/tomcat-launcher-linux-x64
 
 # Spec hash calculation
 spec/.hash
