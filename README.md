@@ -1,6 +1,6 @@
 # Tomcat-Launcher
-![Screenshot](assets/Tomcat-LauncherScreenShot-1.png)
-![Screenshot](assets/Tomcat-Launcher-ScreenShot-2.png)
+![Screenshot](assets/icons/Tomcat-Launcher-ScreenShot-1.png)
+![Screenshot](assets/icons/Tomcat-Launcher-ScreenShot-2.png)
 
 
 ## Description
