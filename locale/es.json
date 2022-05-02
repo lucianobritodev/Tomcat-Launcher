@@ -1,7 +1,8 @@
 {
     "tooltip": "Tomcat-Launcher",
     "add": "Agregar un nuevo Tomcat ...",
-    "open": "Abrir la carpeta",
+    "open": "Abrir en la carpeta",
+    "browser": "Abrir en el navegador",
     "log": "Abrir el log",
     "server": "Configurar el server.xml",
     "context": "Configurar el context.xml",
@@ -11,16 +12,25 @@
     "close": "Cerrar el Tomcat-Launcher",
     "notifier": {
         "start": {
-            "title": "¡Corriendo!",
+            "title": "¡Servidor corriendo!",
             "message": "Tomcat se inició con éxito."
         },
         "stop": {
-            "title": "¡Detenido!",
+            "title": "¡Servidor detenido!",
             "message": "Tomcat terminó con éxito."
         },
         "error": {
-            "title": "Error!",
+            "title": "¡Error!",
             "message": "No se puede iniciar/detener Tomcat."
+        },
+        "alert-to-stop": {
+            "title": "¡Servidor en uso!",
+            "message": "Para realizar configuraciones, es necesario detener la ejecución del servidor."
+        },
+        
+        "default": {
+            "title": "¡Proceando!",
+            "message": "Espere por favor ..."
         }
     }
 }

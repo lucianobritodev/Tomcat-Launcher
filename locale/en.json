@@ -2,6 +2,7 @@
     "tooltip": "Tomcat-Launcher",
     "add": "Add a new Tomcat ...",
     "open": "Open containing folder",
+    "browser": "open in browser",
     "log": "Open log",
     "server": "Configure server.xml",
     "context": "Configure context.xml",
@@ -11,7 +12,7 @@
     "close": "Close Tomcat-Launcher",
     "notifier": {
         "start": {
-            "title": "Running!",
+            "title": "Server running!",
             "message": "Tomcat started successfully."
         },
         "stop": {
@@ -21,6 +22,14 @@
         "error": {
             "title": "Error!",
             "message": "Unable to start/stop Tomcat."
+        },
+        "alert-to-stop": {
+            "title": "Servidor in use!",
+            "message": "To perform configurations, it is necessary to stop the execution of the server."
+        },
+        "default": {
+            "title": "Processing!",
+            "message": "Please await ..."
         }
     }
 }

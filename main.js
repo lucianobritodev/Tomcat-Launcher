@@ -1,6 +1,6 @@
 const { app, Tray, Menu, dialog } = require('electron');
 const { resolve, basename } = require('path');
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const notifier = require('node-notifier');
 const fs = require('fs');
 const Store = require('electron-store');
@@ -23,6 +23,7 @@ if (app.dock) {
 }
 
 const store = new Store({ schema });
+const SERVER_XML = 'conf/server.xml';
 
 function getLocale() {
   const loc = app.getLocale();
@@ -53,35 +54,88 @@ function render(tray = mainTray) {
         },
       },
       {
+        label: locale.browser,
+        click: () => {
+          let running = checkServerRunning(resolve(path, SERVER_XML));
+
+          if(running) {
+            let url = getServerURL(resolve(path, SERVER_XML));
+            openInBrowser(url);
+          } else  {
+            showNotifications(2);
+          }
+        },
+      },
+      {
         label: locale.log,
         click: () => {
           spawn(`$(xdg-open ${path}/logs/catalina.$(date --rfc-3339=date).log)`, [], { shell: true });
         },
       },
       {
+        type: 'separator',
+      },
+      {
         label: locale.server,
         click: () => {
-            spawn(`$(xdg-open ${path}/conf/server.xml)`, [], { shell: true });
+          let running = checkServerRunning(resolve(path, SERVER_XML));
+
+          if(running) {
+            showNotifications(3);
+          } else {
+            spawn(`$(xdg-open ${path}/${SERVER_XML})`, [], { shell: true });
+          }
+            
         },
       },
       {
         label: locale.context,
         click: () => {
-          spawn(`$(xdg-open ${path}/conf/context.xml)`, [], { shell: true });
+          let running = checkServerRunning(resolve(path, SERVER_XML));
+          
+          if(running) {
+            showNotifications(3);
+          } else {
+            spawn(`$(xdg-open ${path}/conf/context.xml)`, [], { shell: true });
+          }
+          
         },
+      },
+      {
+        type: 'separator',
       },
       {
         label: locale.start,
         click: () => {
-          spawn(`$(bash ${path}/bin/startup.sh)`, [], { shell: true });
-          showNotifications(1);
+          let url = getServerURL(resolve(path, SERVER_XML));
+          spawn(`$(sh ${path}/bin/startup.sh)`, [], { shell: true });
+          showNotifications(0);
+
+          setTimeout(() => {
+            if(checkServerRunning(resolve(path, SERVER_XML))) {
+              showNotifications(1);
+              openInBrowser(url);
+            } else {
+              showNotifications(2);
+            } 
+          }, 6000);
+          
         },
       },
       {
         label: locale.stop,
         click: () => {
-            spawn(`$(bash ${path}/bin/shutdown.sh)`, [], { shell: true });
-            showNotifications(2);
+            spawn(`$(sh ${path}/bin/shutdown.sh)`, [], { shell: true });
+            showNotifications(0);
+
+            setTimeout(() => {
+              if(checkServerRunning(resolve(path, SERVER_XML))) {
+                showNotifications(1);
+              } else {
+                showNotifications(2);
+              } 
+            }, 4000);
+
         }
       },
       {
@@ -135,48 +189,93 @@ function render(tray = mainTray) {
   tray.on('click', tray.popUpContextMenu);
 }
 
+function openInBrowser(url) {
+  spawn(`$(xdg-open ${url})`, [], { shell: true });
+}
+
+/**
+ * Show notifications method
+ * 
+ * num 0 to show await process message.
+ * num 1 to show start server success message.
+ * num 2 to show stop server warning message.
+ * num 3 to show alert-to-stop server warning message.
+ * default to show error message.
+ * 
+ * @param {number} num
+ */
 function showNotifications(num) {
   switch (num) {
+    case 0:
+      launchNotification("default", "icon.png");
+      break;
     case 1:
-      startTomcat();
+      launchNotification("start", "success.png");
       break;
     case 2:
-      stopTomcat();
+      launchNotification("stop", "warning.png");
+      break;
+    case 3:
+      launchNotification("alert-to-stop", "warning.png");
       break;
     default:
-      errorTomcat();
+      launchNotification("error", "error.png");
       break;
   }
 }
 
-function startTomcat() {
+function launchNotification(type, iconName) {
+
+  let title = locale.notifier[type].title
+  let message = locale.notifier[type].message
+  iconName = resolve(__dirname, `assets/icons/${iconName}`)
+
   return notifier.notify({
-    title: locale.notifier.start.title,
-    message: locale.notifier.start.message,
+    title: title,
+    message: message,
     wait: true,
     timeout: false,
-    icon: resolve(__dirname, 'assets/icons/icon.png')
+    icon: iconName
   });
+
 }
 
-function stopTomcat() {
-  return notifier.notify({
-    title: locale.notifier.stop.title,
-    message: locale.notifier.stop.message,
-    wait: true,
-    timeout: false,
-    icon: resolve(__dirname, 'assets/icons/icon.png')
-  });
+function getServerURL(path) {
+  let url = ""
+  
+  const regExpHost = /\s?\t?<Host.*name=.*/g;
+  const regExpPort = /\s?\t?<Connector.*protocol=\"HTTP.*\"/g;
+
+  const data = fs.readFileSync(path, {encoding:'utf8', flag:'r'});       
+  
+  if(regExpHost.test(data)) {
+    let text = data.match(regExpHost);
+    url += 'http://' + text.join('').split('="')[1].split('"')[0].trim();
+  }
+  
+  if(regExpPort.test(data) && url != "") {
+    let text = data.match(regExpPort);
+    url += ':' + text.join('').split('port="')[1].split('"')[0].trim() + '/';
+  } else {
+    url = "http://localhost:8080/"
+  }
+
+  return url;
 }
 
-function errorTomcat() {
-  return notifier.notify({
-    title: locale.notifier.error.title,
-    message: locale.notifier.error.message,
-    wait: true,
-    timeout: false,
-    icon: resolve(__dirname, 'assets/icons/icon.png')
-  });
+function checkServerRunning(path) {
+  const regExpPort = /\s?\t?<Server.*shutdown=\"SHUTDOWN\"/g;
+  const data = fs.readFileSync(path, {encoding:'utf8', flag:'r'});
+  let port = "";  
+  
+  if(regExpPort.test(data)) {
+    let text = data.match(regExpPort);
+    port += text.join('').split('port="')[1].split('"')[0].trim();
+  }
+
+  let run = spawnSync(`lsof -i | grep "${port}"`, [], { shell: true });
+
+  return String(run.output).includes(port);
 }
 
 app.whenReady().then(() => {

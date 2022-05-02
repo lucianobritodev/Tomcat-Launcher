@@ -2,12 +2,21 @@
     "dest": "dist/installers/",
     "icon": "build/icons/icon.png",
     "categories": [
-      "Development"
+      "Development",
+      "GNOME",
+      "GTK"
     ],
     "options": {
         "name": "Tomcat Launcher",
         "description": "Launcher for Tomcat available on your system from here",
         "arch": "amd64",
-        "icon": "build/icons/icon.png"
+        "icon": "build/icons/icon.png",
+        "depends": [
+          "lsof-4.89",
+          "xdg-open-1.1.2",
+          "xdg-mime-1.1.2",
+          "sed-4.4",
+          ""
+        ]
     }
 }
