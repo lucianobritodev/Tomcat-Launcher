@@ -10,13 +10,14 @@
         "name": "Tomcat Launcher",
         "description": "Launcher for Tomcat available on your system from here",
         "arch": "amd64",
-        "icon": "build/icons/icon.png",
-        "depends": [
-          "lsof-4.89",
-          "xdg-open-1.1.2",
-          "xdg-mime-1.1.2",
-          "sed-4.4",
-          ""
-        ]
-    }
+        "icon": "build/icons/icon.png"
+    },
+    "deb": {
+			"depends": [
+        "lsof-4.89",
+        "xdg-open-1.1.2",
+        "xdg-mime-1.1.2",
+        "sed-4.4"
+			]
+		}
 }

@@ -228,7 +228,7 @@ function launchNotification(type, iconName) {
 
   let title = locale.notifier[type].title
   let message = locale.notifier[type].message
-  iconName = resolve(__dirname, `assets/icons/${iconName}`)
+  iconName = resolve(__dirname, 'assets', 'icons', iconName)
 
   return notifier.notify({
     title: title,

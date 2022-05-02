@@ -1,6 +1,6 @@
 {
   "name": "tomcat-launcher",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "productName": "Tomcat Launcher",
   "description": "Launcher for Tomcats path available on your system",
   "license": "MIT",
