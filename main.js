@@ -1,12 +1,26 @@
-const { app, Tray, Menu, dialog } = require('electron');
-const { resolve, basename } = require('path');
-const { spawn, spawnSync } = require('child_process');
+const {
+  app,
+  Tray,
+  Menu,
+  dialog
+} = require('electron');
+const {
+  resolve,
+  basename
+} = require('path');
+const {
+  spawn,
+  spawnSync,
+  exec
+} = require('child_process');
 const notifier = require('node-notifier');
 const fs = require('fs');
 const Store = require('electron-store');
-const Sentry = require ('@sentry/electron');
+const Sentry = require('@sentry/electron');
 
-Sentry.init({ dsn: "https://48cf5547b9314631b530b4752d730314@o1145500.ingest.sentry.io/6337305" });
+Sentry.init({
+  dsn: "https://48cf5547b9314631b530b4752d730314@o1145500.ingest.sentry.io/6337305"
+});
 
 const schema = {
   tomcatpaths: {
@@ -22,7 +36,9 @@ if (app.dock) {
   app.dock.hide();
 }
 
-const store = new Store({ schema });
+const store = new Store({
+  schema
+});
 const SERVER_XML = 'conf/server.xml';
 
 function getLocale() {
@@ -44,13 +60,17 @@ function render(tray = mainTray) {
   const tomcatPaths = storedTomcatPaths ? JSON.parse(storedTomcatPaths) : [];
   locale = getLocale();
 
-  const items = tomcatPaths.map(({ name, path }) => ({
+  const items = tomcatPaths.map(({
+    name,
+    path
+  }) => ({
     label: name,
-    submenu: [
-      {
+    submenu: [{
         label: locale.open,
         click: () => {
-          spawn("$(xdg-mime query default inode/directory | sed 's/.desktop//g')", [path], { shell: true });
+          spawn("$(xdg-mime query default inode/directory | sed 's/.desktop//g')", [path], {
+            shell: true
+          });
         },
       },
       {
@@ -58,10 +78,10 @@ function render(tray = mainTray) {
         click: () => {
           let running = checkServerRunning(resolve(path, SERVER_XML));
 
-          if(running) {
+          if (running) {
             let url = getServerURL(resolve(path, SERVER_XML));
             openInBrowser(url);
-          } else  {
+          } else {
             showNotifications(2);
           }
         },
@@ -69,7 +89,9 @@ function render(tray = mainTray) {
       {
         label: locale.log,
         click: () => {
-          spawn(`$(xdg-open ${path}/logs/catalina.$(date --rfc-3339=date).log)`, [], { shell: true });
+          spawn(`$(xdg-open ${path}/logs/catalina.$(date --rfc-3339=date).log)`, [], {
+            shell: true
+          });
         },
       },
       {
@@ -80,25 +102,29 @@ function render(tray = mainTray) {
         click: () => {
           let running = checkServerRunning(resolve(path, SERVER_XML));
 
-          if(running) {
+          if (running) {
             showNotifications(3);
           } else {
-            spawn(`$(xdg-open ${path}/${SERVER_XML})`, [], { shell: true });
+            spawn(`$(xdg-open ${path}/${SERVER_XML})`, [], {
+              shell: true
+            });
           }
-            
+
         },
       },
       {
         label: locale.context,
         click: () => {
           let running = checkServerRunning(resolve(path, SERVER_XML));
-          
-          if(running) {
+
+          if (running) {
             showNotifications(3);
           } else {
-            spawn(`$(xdg-open ${path}/conf/context.xml)`, [], { shell: true });
+            spawn(`$(xdg-open ${path}/conf/context.xml)`, [], {
+              shell: true
+            });
           }
-          
+
         },
       },
       {
@@ -108,33 +134,37 @@ function render(tray = mainTray) {
         label: locale.start,
         click: () => {
           let url = getServerURL(resolve(path, SERVER_XML));
-          spawn(`$(sh ${path}/bin/startup.sh)`, [], { shell: true });
+          spawn(`$(sh ${path}/bin/startup.sh)`, [], {
+            shell: true
+          });
           showNotifications(0);
 
           setTimeout(() => {
-            if(checkServerRunning(resolve(path, SERVER_XML))) {
+            if (checkServerRunning(resolve(path, SERVER_XML))) {
               showNotifications(1);
               openInBrowser(url);
             } else {
               showNotifications(2);
-            } 
+            }
           }, 6000);
-          
+
         },
       },
       {
         label: locale.stop,
         click: () => {
-            spawn(`$(sh ${path}/bin/shutdown.sh)`, [], { shell: true });
-            showNotifications(0);
+          spawn(`$(sh ${path}/bin/shutdown.sh)`, [], {
+            shell: true
+          });
+          showNotifications(0);
 
-            setTimeout(() => {
-              if(checkServerRunning(resolve(path, SERVER_XML))) {
-                showNotifications(1);
-              } else {
-                showNotifications(2);
-              } 
-            }, 4000);
+          setTimeout(() => {
+            if (checkServerRunning(resolve(path, SERVER_XML))) {
+              showNotifications(1);
+            } else {
+              showNotifications(2);
+            }
+          }, 4000);
 
         }
       },
@@ -148,26 +178,45 @@ function render(tray = mainTray) {
     ],
   }));
 
-  const contextMenu = Menu.buildFromTemplate([
-    {
+  const contextMenu = Menu.buildFromTemplate([{
       label: locale.add,
       click: () => {
-        newItem = dialog.showOpenDialogSync({ properties: ['openDirectory'] });
+
+        newItem = dialog.showOpenDialogSync({
+          properties: ['openDirectory']
+        });
 
         if (!newItem) return;
+        const [path] = newItem;
+        const verifyCatalina = spawnSync(`test -e ${path}/bin/catalina.sh && echo $?`, [],  {
+          shell: true
+        });
 
-        const [ path ] = newItem;
-        const name = basename(path);
+        const catalina = parseInt(String(verifyCatalina.output).replaceAll(',','').replaceAll('\n',''));
+        if(catalina != NaN && catalina == 0) {
+          const verifyCount = spawnSync(
+            `ls -hog ${path}/bin/ | grep ".*.sh$" | egrep -v ^"-rwx" | wc --line`,
+            [],
+            {shell: true}
+          );
 
-        store.set('tomcatpaths', JSON.stringify([
-          ...tomcatPaths,
-          {
-            path,
-            name,
-          },
-        ]));
+          const count = parseInt(String(verifyCount.output).replaceAll(',','').replaceAll('\n',''));
+          if(count > 0) showNotifications(4);
 
-        render();
+          const name = basename(path);
+
+          store.set('tomcatpaths', JSON.stringify([
+            ...tomcatPaths,
+            {
+              path,
+              name,
+            },
+          ]));
+
+          render();
+        } else {
+          showNotifications(5);
+        }
       },
     },
     {
@@ -190,7 +239,9 @@ function render(tray = mainTray) {
 }
 
 function openInBrowser(url) {
-  spawn(`$(xdg-open ${url})`, [], { shell: true });
+  spawn(`$(xdg-open ${url})`, [], {
+    shell: true
+  });
 }
 
 /**
@@ -218,6 +269,12 @@ function showNotifications(num) {
     case 3:
       launchNotification("alert-to-stop", "warning.png");
       break;
+    case 4:
+      launchNotification("no-execution-permission", "warning.png");
+      break;
+    case 5:
+      launchNotification("no-tomcat-path", "error.png");
+      break;
     default:
       launchNotification("error", "error.png");
       break;
@@ -234,6 +291,7 @@ function launchNotification(type, iconName) {
     title: title,
     message: message,
     wait: true,
+    time: 5000,
     timeout: false,
     icon: iconName
   });
@@ -242,18 +300,21 @@ function launchNotification(type, iconName) {
 
 function getServerURL(path) {
   let url = ""
-  
+
   const regExpHost = /\s?\t?<Host.*name=.*/g;
   const regExpPort = /\s?\t?<Connector.*protocol=\"HTTP.*\"/g;
 
-  const data = fs.readFileSync(path, {encoding:'utf8', flag:'r'});       
-  
-  if(regExpHost.test(data)) {
+  const data = fs.readFileSync(path, {
+    encoding: 'utf8',
+    flag: 'r'
+  });
+
+  if (regExpHost.test(data)) {
     let text = data.match(regExpHost);
     url += 'http://' + text.join('').split('="')[1].split('"')[0].trim();
   }
-  
-  if(regExpPort.test(data) && url != "") {
+
+  if (regExpPort.test(data) && url != "") {
     let text = data.match(regExpPort);
     url += ':' + text.join('').split('port="')[1].split('"')[0].trim() + '/';
   } else {
@@ -265,15 +326,20 @@ function getServerURL(path) {
 
 function checkServerRunning(path) {
   const regExpPort = /\s?\t?<Server.*shutdown=\"SHUTDOWN\"/g;
-  const data = fs.readFileSync(path, {encoding:'utf8', flag:'r'});
-  let port = "";  
-  
-  if(regExpPort.test(data)) {
+  const data = fs.readFileSync(path, {
+    encoding: 'utf8',
+    flag: 'r'
+  });
+  let port = "";
+
+  if (regExpPort.test(data)) {
     let text = data.match(regExpPort);
     port += text.join('').split('port="')[1].split('"')[0].trim();
   }
 
-  let run = spawnSync(`lsof -i | grep "${port}"`, [], { shell: true });
+  let run = spawnSync(`lsof -i | grep "${port}"`, [], {
+    shell: true
+  });
 
   return String(run.output).includes(port);
 }

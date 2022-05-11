@@ -27,6 +27,14 @@
             "title": "Servidor em uso!",
             "message": "Para realizar configurações é preciso parar a execução do servidor."
         },
+        "no-execution-permission": {
+            "title": "Aviso!",
+            "message": "Arquivos de script .sh do Tomcat estão sem permissão de execução!\n\nExecute o comando \"sudo chmod +x *.sh\" no diretorio /bin do Tomcat selecionado para corrigir, caso contrário, o servidor não poderá ser executado."
+        },
+        "no-tomcat-path": {
+            "title": "Erro!",
+            "message": "Caminho adicionado não corresponde a um Tomcat!\n\nPor favor, adicione um caminho correspondente."
+        },
         "default": {
             "title": "Processando!",
             "message": "Por favor, aguarde ..."

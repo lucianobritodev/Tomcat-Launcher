@@ -27,7 +27,14 @@
             "title": "¡Servidor en uso!",
             "message": "Para realizar configuraciones, es necesario detener la ejecución del servidor."
         },
-        
+        "no-execution-permission": {
+            "title": "¡Darse cuenta!",
+            "message": "¡Los archivos script.sh de Tomcat no pueden ejecutarse!\n\nEjecute el comando \"sudo chmod +x *.sh\" en el directorio /bin de Tomcat seleccionado para corregirlo; de lo contrario, el servidor no podrá ejecutarse."
+        },
+        "no-tomcat-path": {
+            "title": "¡Error!",
+            "message": "¡La ruta agregada no coincide con un Tomcat!\n\nPor favor, agregue una ruta que coincida."
+        },
         "default": {
             "title": "¡Proceando!",
             "message": "Espere por favor ..."

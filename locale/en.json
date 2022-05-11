@@ -27,6 +27,14 @@
             "title": "Servidor in use!",
             "message": "To perform configurations, it is necessary to stop the execution of the server."
         },
+        "no-execution-permission": {
+            "title": "Warning!",
+            "message": "Tomcat script files are not allowed to execute!\n\nRun the command \"sudo chmod +x *.sh\" in the selected Tomcat /bin directory to fix, otherwise the server will not be able to run."
+        },
+        "no-tomcat-path": {
+            "title": "Error!",
+            "message": "Added path does not match a Tomcat!\n\nPlease add a corresponding path."
+        },
         "default": {
             "title": "Processing!",
             "message": "Please await ..."
